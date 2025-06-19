@@ -1,0 +1,13 @@
+/* src/components/Header.css */
+.header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+
+.header nav a {
+  color: #61dafb;
+  margin: 0 10px;
+  text-decoration: none;
+}
