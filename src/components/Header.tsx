@@ -17,14 +17,16 @@
  */
 import React from "react";
 import "./Header.css";
+import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
   return (
     <header className="header">
       <h1>나의 메모장</h1>
       <nav>
-        <a href="/">홈</a>
-        <a href="/todo_list">TodoList</a>
+        <Link to="/">홈</Link>
+        <Link to="/todo_list">TodoList</Link>
+        <Link to="/memo_editorv3">메모작성</Link>
       </nav>
     </header>
   );
