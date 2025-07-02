@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Viewer } from "@toast-ui/react-editor";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { useValidateToken } from "../hooks/LoginValidate";
 
 interface MemoData {
   idp: number;
@@ -12,6 +13,7 @@ interface MemoData {
 }
 
 const MemoDetail: React.FC = () => {
+  useValidateToken();
   const [memo, setMemo] = useState<MemoData | null>(null);
   const [searchParams] = useSearchParams();
   const idp = Number(searchParams?.get("idp") ?? 0);
@@ -21,7 +23,7 @@ const MemoDetail: React.FC = () => {
       if (!idp) return;
       try {
         const response = await axios.get(
-          `http://localhost:3001/api/memo/get_memo_by_idp`,
+          `${process.env.REACT_APP_API_URL}/api/memo/get_memo_by_idp`,
           {
             params: { idp },
           }

@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
+import { useValidateToken } from "../hooks/LoginValidate";
 
 type Todo = {
   idp: number;
@@ -11,6 +13,9 @@ type Todo = {
 };
 
 const TodoList: React.FC = () => {
+  useValidateToken();
+  const userToken = useAuthStore((state) => state?.userToken ?? "");
+  const userData = useAuthStore((state) => state.userData);
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -18,16 +23,23 @@ const TodoList: React.FC = () => {
 
   // ✅ 서버에서 목록 불러오기
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/memo/list")
-      .then((res) => {
-        console.log(`## res:`, res);
-        setTodos(res?.data?.data ?? []); // 서버에서 받은 데이터를 todos 상태에 저장
-        console.log(`## todos:`, todos);
-      })
-      .catch((err) => {
-        console.error("❌ 데이터 불러오기 실패:", err);
-      });
+    const _useEffect = async () => {
+      await axios
+        .get(`${process.env.REACT_APP_API_URL}/api/memo/list`, {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        })
+        .then((res) => {
+          console.log(`## res:`, res);
+          setTodos(res?.data?.data ?? []); // 서버에서 받은 데이터를 todos 상태에 저장
+          console.log(`## todos:`, todos);
+        })
+        .catch((err) => {
+          console.error("❌ 데이터 불러오기 실패:", err);
+        });
+    };
+    _useEffect();
   }, []); // 최초 1회만 실행
 
   const handleAdd = () => {
@@ -37,9 +49,26 @@ const TodoList: React.FC = () => {
     setContent("");
   };
 
-  const handleDelete = (index: number) => {
-    const updated = todos.filter((_, i) => i !== index);
-    setTodos(updated);
+  const handleDelete = async (idp: number) => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/memo/delete`,
+        {
+          idp: idp,
+        }
+      );
+
+      if (res?.data?.success) {
+        // 클라이언트 상태에서도 해당 idp를 가진 메모 삭제
+        const updated = todos.filter((todo) => todo.idp !== idp);
+        setTodos(updated);
+      } else {
+        alert(`삭제 실패: ${res.data.message}`);
+      }
+    } catch (err: any) {
+      console.error("❌ 삭제 요청 실패:", err);
+      alert("서버 오류로 삭제에 실패했습니다.");
+    }
   };
 
   const handleUpdate = (idp: number) => {
@@ -78,7 +107,7 @@ const TodoList: React.FC = () => {
                 update
               </button>
               <button
-                onClick={() => handleDelete(index)}
+                onClick={() => handleDelete(todo?.idp)}
                 className="text-red-600 hover:underline"
               >
                 delete

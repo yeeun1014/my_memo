@@ -5,9 +5,13 @@ import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Editor } from "@toast-ui/react-editor";
+import { useValidateToken } from "../hooks/LoginValidate";
+import { useAuthStore } from "../store/authStore";
 //import "@toast-ui/editor/dist/toastui-editor.css";
 
 const MemoEditorV3: React.FC = () => {
+  useValidateToken();
+  const userToken = useAuthStore((state) => state?.userToken ?? "");
   const editorRef = useRef<Editor>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,7 +33,7 @@ const MemoEditorV3: React.FC = () => {
           return;
         }
         let res: any = await axios.get(
-          `http://localhost:3001/api/memo/get_memo_by_idp?idp=${idp}`
+          `${process.env.REACT_APP_API_URL}/api/memo/get_memo_by_idp?idp=${idp}`
         );
         res = res?.data;
 
@@ -69,8 +73,13 @@ const MemoEditorV3: React.FC = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/memo/upsert",
-        { idp, title, content }
+        `${process.env.REACT_APP_API_URL}/api/memo/upsert`,
+        { idp, title, content },
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
       );
       alert("작성이 되었습니다");
       navigate("/todo_list"); // ✅ 작성 성공 시 페이지 이동
@@ -103,7 +112,7 @@ const MemoEditorV3: React.FC = () => {
               const formData = new FormData();
               formData.append("image", blob);
 
-              const apiKey = "a6148986ea38ace7ee77c6a19e3eb7ed"; // ✅ 여기에 발급받은 API 키 입력
+              const apiKey = "07c1e5d07ef4c497e700e5b7c041626912345a"; // ✅ 여기에 발급받은 API 키 입력
               const res = await axios.post(
                 `https://api.imgbb.com/1/upload?key=${apiKey}`,
                 formData

@@ -1,13 +1,67 @@
-/* src/components/Header.css */
 .header {
   background-color: #282c34;
-  padding: 20px;
+  padding: 10px 20px;
   color: white;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
-.header nav a {
+/* 최상단 줄 */
+.top-row {
+  position: relative;
+  height: 50px;
+}
+
+/* 로그인/로그아웃 우측 정렬 */
+.user-info {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* 제목 중앙 정렬 */
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 0;
+  line-height: 50px;
+}
+
+/* 메뉴줄 중앙 정렬 */
+.menu-row {
+  text-align: center;
+  margin-top: 5px;
+}
+
+.menu-row a {
   color: #61dafb;
   margin: 0 10px;
   text-decoration: none;
+}
+
+/* 공통 스타일 */
+.logout-btn,
+.login-link {
+  background-color: transparent;
+  border: 1px solid #61dafb;
+  color: #61dafb;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.logout-btn:hover,
+.login-link:hover {
+  background-color: #61dafb;
+  color: #282c34;
+}
+
+.username {
+  color: white;
 }

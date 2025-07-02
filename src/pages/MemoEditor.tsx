@@ -17,7 +17,7 @@ const MemoEditor: React.FC = () => {
         setIdp(idp); // ① 먼저 idp 저장
 
         let res: any = await axios.get(
-          `http://localhost:3001/api/memo/get_memo_by_idp?idp=${idp}`
+          `${process.env.REACT_APP_API_URL}/api/memo/get_memo_by_idp?idp=${idp}`
         );
         res = res?.data;
         console.log(`## res:`, res);
@@ -43,7 +43,7 @@ const MemoEditor: React.FC = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/memo/upsert",
+        `${process.env.REACT_APP_API_URL}/api/memo/upsert`,
         { idp, title, content }
       );
       alert("작성이 되었습니다");
