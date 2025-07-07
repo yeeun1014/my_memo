@@ -41,7 +41,7 @@ export const useValidateToken = () => {
   const userToken = useAuthStore((state) => state?.userToken ?? "");
 
   try {
-    let res: any = await axios.post("http://:3001/api/auth/validate", {
+    let res: any = await axios.post("http://localhost:3001/api/auth/validate", {
       token: userToken,
     });
     res = res?.data;
